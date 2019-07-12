@@ -18,6 +18,7 @@ export default {
   async mounted() {
    //分发action，从后台获取数据到state中
    this.$store.dispatch('getAddress')
+   this.$store.dispatch('autoLogin')
   },
   components: {
     FooterGuide
@@ -26,6 +27,4 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
-#app
-  color red
 </style>

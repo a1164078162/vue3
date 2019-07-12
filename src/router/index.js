@@ -8,6 +8,7 @@ import routers from './routers'
 Vue.use(VueRouter)
 
 export default new VueRouter({ // 配置对象
+  mode: 'history', //没有#
   // 配置路由
   routes:routers
 })

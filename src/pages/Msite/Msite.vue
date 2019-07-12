@@ -39,7 +39,10 @@ import ShopList from "../../components/ShopList/ShopList";
 import "swiper/dist/css/swiper.min.css";
 export default {
   computed: {
-    ...mapState(["address", "categorys"]),
+    ...mapState({
+      address: state => state.msite.address,
+      categorys: state => state.msite.categorys
+    }),
     //根据分类的一维数组生成二维数组
     categorysArr() {
       //取出相关数据

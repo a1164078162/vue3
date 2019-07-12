@@ -50,15 +50,14 @@
                 </div>
               </section>
               <section class="login_message">
-                <input
-                  type="text"
-                  maxlength="11"
-                  placeholder="验证码"
+                <input type="text" maxlength="11" placeholder="验证码" v-model="captcha" />
+                <img
+                  class="get_verification"
+                  src="http://localhost:5000/captcha"
+                  alt="captcha"
                   @click="updateCapcha"
                   ref="captcha"
-                  v-model="captcha"
                 />
-                <img class="get_verification" src="http://localhost:5000/captcha" alt="captcha" />
               </section>
             </section>
           </div>
@@ -75,18 +74,18 @@
 
 <script type="text/ecmascript-6">
 import { reqSendCode, reqPwdLogin, reqSmsLogin } from "../../api";
-import { RECEIEV_USER } from "../../vuex/mutation-tyoes";
+import { RECEIVE_USER } from "../../vuex/mutation-tyoes";
 export default {
   data() {
     return {
       loginType: true, //显示登录的方式,true短信登录,false密码登录
       phone: "", //手机号
-      computeTime: 0, //计时剩余的事件，为0没有计时了
-      isShowPwd: false, //是否显示密码，默认不显示
       code: "",
       name: "",
       pwd: "",
-      captcha: ""
+      captcha: "",
+      computeTime: 0, //计时剩余的事件，为0没有计时了
+      isShowPwd: false //是否显示密码，默认不显示
     };
   },
 
@@ -114,7 +113,8 @@ export default {
           clearInterval(intervalId);
         }
       }, 1000);
-      //发送ajax请求，发送短信验证码
+
+      //发送ajax请求：发送短信验证码
       const result = await reqSendCode(this.phone);
       if (result.code === 0) {
         alert("短信已发送");
@@ -130,27 +130,27 @@ export default {
       this.$refs.captcha.src =
         "http://localhost:5000/captcha?time" + Date.now();
     },
+
     /* 
-    登录
-    */
+  登录
+  */
     async login() {
       let result;
       const { loginType, phone, code, name, pwd, captcha } = this;
       //发密码登录的请求
       if (!loginType) {
-        result = await reqPwdLogin({ name, pwd, captcha });
+       result = await reqPwdLogin({ name, pwd, captcha });
       } else {
         //发短信登录的请求
         result = await reqSmsLogin(phone, code);
       }
-
       //根据结果进行响应处理
-      if (result === 0) {
+      if (result.code === 0) {
         //将user信息保存到stat中
         const user = result.data;
-        this.$store.dispatch("recordUser", user);
+        this.$store.dispatch('recordUser', user);
         //跳转到个人中心
-        this.$router.repalce("/profile");
+        this.$router.replace("/profile");
       } else {
         //登录失败
         alert(result.msg);
